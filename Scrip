@@ -4,9 +4,9 @@ local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
 
 local isDupeOn = false
-local incrementValue = 1 -- Valor padrão de duplicação
+local incrementValue = 1
 
--- UI SETUP
+-- ==================== MAIN SCREEN SETUP ====================
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "ttkzwzzHub"
 ScreenGui.ResetOnSpawn = false
@@ -14,59 +14,94 @@ ScreenGui.IgnoreGuiInset = true
 ScreenGui.Parent = player:FindFirstChild("PlayerGui") or game:GetService("CoreGui")
 
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 310, 0, 190) -- Aumentado para caber o menu
-MainFrame.Position = UDim2.new(0.5, -155, 0.5, -95)
-MainFrame.BackgroundColor3 = Color3.fromRGB(15, 0, 0) -- Fundo Preto
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 310, 0, 160) -- Levemente maior para incluir o menu de valor
+MainFrame.Position = UDim2.new(0.5, -155, 0.5, -80)
+MainFrame.BackgroundColor3 = Color3.fromRGB(10, 5, 5) -- Preto profundo
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Parent = ScreenGui
 
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 12)
+MainCorner.Parent = MainFrame
+
+-- Borda Vermelha com efeito Pulsante
 local MainStroke = Instance.new("UIStroke")
 MainStroke.Thickness = 2
-MainStroke.Color = Color3.fromRGB(200, 0, 0) -- Borda Vermelha
+MainStroke.Color = Color3.fromRGB(255, 0, 0)
+MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 MainStroke.Parent = MainFrame
 
--- TÍTULO
-local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, 0, 0, 40)
-Title.Text = "ttkzwzz <font color='rgb(255, 0, 0)'>Dupe</font>"
-Title.RichText = true
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.Font = Enum.Font.GothamBold
-Title.TextSize = 14
-Title.Parent = MainFrame
-
--- DROPDOWN DE VALOR
-local Dropdown = Instance.new("TextBox")
-Dropdown.Size = UDim2.new(0, 80, 0, 30)
-Dropdown.Position = UDim2.new(0, 16, 0, 50)
-Dropdown.BackgroundColor3 = Color3.fromRGB(40, 0, 0)
-Dropdown.TextColor3 = Color3.fromRGB(255, 255, 255)
-Dropdown.PlaceholderText = "Valor"
-Dropdown.Text = "1"
-Dropdown.Parent = MainFrame
-
-Dropdown.FocusLost:Connect(function()
-    incrementValue = tonumber(Dropdown.Text) or 1
+-- Efeito Pulsante (Fade In/Out)
+task.spawn(function()
+    while true do
+        TweenService:Create(MainStroke, TweenInfo.new(1.5), {Transparency = 0.5}):Play()
+        task.wait(1.5)
+        TweenService:Create(MainStroke, TweenInfo.new(1.5), {Transparency = 0}):Play()
+        task.wait(1.5)
+    end
 end)
 
--- TOGGLE
+-- ==================== HEADER ====================
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -60, 0, 40)
+Title.Position = UDim2.new(0, 16, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Font = Enum.Font.GothamBold
+Title.Text = "🤖 ttkzwzz <font color='rgb(255, 0, 0)'>Dupe</font>"
+Title.RichText = true
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 13
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = MainFrame
+
+-- ==================== MENU DE VALOR ====================
+local ValueInput = Instance.new("TextBox")
+ValueInput.Size = UDim2.new(0, 60, 0, 25)
+ValueInput.Position = UDim2.new(0, 16, 0, 50)
+ValueInput.BackgroundColor3 = Color3.fromRGB(30, 5, 5)
+ValueInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+ValueInput.PlaceholderText = "Valor"
+ValueInput.Text = "1"
+ValueInput.Parent = MainFrame
+local InputCorner = Instance.new("UICorner")
+InputCorner.CornerRadius = UDim.new(0, 6)
+InputCorner.Parent = ValueInput
+
+ValueInput.FocusLost:Connect(function()
+    incrementValue = tonumber(ValueInput.Text) or 1
+end)
+
+-- ==================== TOGGLE ====================
 local ToggleSwitch = Instance.new("TextButton")
 ToggleSwitch.Size = UDim2.new(0, 44, 0, 22)
-ToggleSwitch.Position = UDim2.new(1, -60, 0, 54)
-ToggleSwitch.BackgroundColor3 = Color3.fromRGB(40, 0, 0)
+ToggleSwitch.Position = UDim2.new(1, -56, 0, 52)
+ToggleSwitch.BackgroundColor3 = Color3.fromRGB(40, 5, 5)
 ToggleSwitch.Text = ""
 ToggleSwitch.Parent = MainFrame
+local SwitchCorner = Instance.new("UICorner")
+SwitchCorner.CornerRadius = UDim.new(1, 0)
+SwitchCorner.Parent = ToggleSwitch
 
--- RODAPÉ
+ToggleSwitch.MouseButton1Click:Connect(function()
+    isDupeOn = not isDupeOn
+    local targetColor = isDupeOn and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(40, 5, 5)
+    TweenService:Create(ToggleSwitch, TweenInfo.new(0.3), {BackgroundColor3 = targetColor}):Play()
+end)
+
+-- ==================== FOOTER ====================
 local CreditLabel = Instance.new("TextLabel")
-CreditLabel.Size = UDim2.new(1, 0, 0, 20)
-CreditLabel.Position = UDim2.new(0, 0, 1, -25)
-CreditLabel.Text = "Made by ttkzwzz"
+CreditLabel.Size = UDim2.new(1, 0, 0, 16)
+CreditLabel.Position = UDim2.new(0, 0, 1, -20)
+CreditLabel.BackgroundTransparency = 1
+CreditLabel.Font = Enum.Font.GothamSemibold
+CreditLabel.Text = "🔮 Made by ttkzwzz 🔮"
 CreditLabel.TextColor3 = Color3.fromRGB(150, 0, 0)
+CreditLabel.TextSize = 8.5
 CreditLabel.Parent = MainFrame
 
--- LÓGICA DE DUPLICAÇÃO VISUAL
+-- ==================== LÓGICA ====================
 task.spawn(function()
     while true do
         task.wait(0.5)
@@ -84,10 +119,4 @@ task.spawn(function()
             end
         end
     end
-end)
-
--- Evento do Toggle (Simples)
-ToggleSwitch.MouseButton1Click:Connect(function()
-    isDupeOn = not isDupeOn
-    ToggleSwitch.BackgroundColor3 = isDupeOn and Color3.fromRGB(200, 0, 0) or Color3.fromRGB(40, 0, 0)
 end)
