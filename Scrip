@@ -15,18 +15,19 @@ ScreenGui.Parent = player:FindFirstChild("PlayerGui") or game:GetService("CoreGu
 
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 310, 0, 160)
-MainFrame.Position = UDim2.new(0.5, -155, 0.5, -80)
+-- Tamanho reduzido para 200x120
+MainFrame.Size = UDim2.new(0, 200, 0, 120) 
+MainFrame.Position = UDim2.new(0.5, -100, 0.5, -60)
 MainFrame.BackgroundColor3 = Color3.fromRGB(10, 5, 5)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Parent = ScreenGui
 
 local MainCorner = Instance.new("UICorner")
-MainCorner.CornerRadius = UDim.new(0, 12)
+MainCorner.CornerRadius = UDim.new(0, 10)
 MainCorner.Parent = MainFrame
 
--- LÓGICA DE DRAGGING (Arrastar)
+-- LÓGICA DE DRAGGING
 local dragging, dragInput, dragStart, startPos
 
 MainFrame.InputBegan:Connect(function(input)
@@ -56,7 +57,7 @@ UserInputService.InputEnded:Connect(function(input)
     end
 end)
 
--- Borda Vermelha com efeito Pulsante
+-- Borda Pulsante
 local MainStroke = Instance.new("UIStroke")
 MainStroke.Thickness = 2
 MainStroke.Color = Color3.fromRGB(255, 0, 0)
@@ -74,21 +75,20 @@ end)
 
 -- ==================== HEADER ====================
 local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, -60, 0, 40)
-Title.Position = UDim2.new(0, 16, 0, 0)
+Title.Size = UDim2.new(1, 0, 0, 30)
+Title.Position = UDim2.new(0, 0, 0, 5)
 Title.BackgroundTransparency = 1
 Title.Font = Enum.Font.GothamBold
 Title.Text = "🤖 ttkzwzz <font color='rgb(255, 0, 0)'>Dupe</font>"
 Title.RichText = true
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextSize = 13
-Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.TextSize = 12
 Title.Parent = MainFrame
 
 -- ==================== MENU DE VALOR ====================
 local ValueInput = Instance.new("TextBox")
-ValueInput.Size = UDim2.new(0, 60, 0, 25)
-ValueInput.Position = UDim2.new(0, 16, 0, 50)
+ValueInput.Size = UDim2.new(0, 50, 0, 25)
+ValueInput.Position = UDim2.new(0, 15, 0, 45)
 ValueInput.BackgroundColor3 = Color3.fromRGB(30, 5, 5)
 ValueInput.TextColor3 = Color3.fromRGB(255, 255, 255)
 ValueInput.PlaceholderText = "Value"
@@ -104,13 +104,15 @@ end)
 
 -- ==================== TOGGLE ====================
 local ToggleSwitch = Instance.new("TextButton")
-ToggleSwitch.Size = UDim2.new(0, 44, 0, 22)
-ToggleSwitch.Position = UDim2.new(1, -56, 0, 52)
+ToggleSwitch.Size = UDim2.new(0, 40, 0, 25)
+ToggleSwitch.Position = UDim2.new(1, -55, 0, 45)
 ToggleSwitch.BackgroundColor3 = Color3.fromRGB(40, 5, 5)
-ToggleSwitch.Text = ""
+ToggleSwitch.Text = "ON/OFF"
+ToggleSwitch.TextColor3 = Color3.fromRGB(255, 255, 255)
+ToggleSwitch.TextSize = 10
 ToggleSwitch.Parent = MainFrame
 local SwitchCorner = Instance.new("UICorner")
-SwitchCorner.CornerRadius = UDim.new(1, 0)
+SwitchCorner.CornerRadius = UDim.new(0, 6)
 SwitchCorner.Parent = ToggleSwitch
 
 ToggleSwitch.MouseButton1Click:Connect(function()
@@ -121,13 +123,13 @@ end)
 
 -- ==================== FOOTER ====================
 local CreditLabel = Instance.new("TextLabel")
-CreditLabel.Size = UDim2.new(1, 0, 0, 16)
-CreditLabel.Position = UDim2.new(0, 0, 1, -20)
+CreditLabel.Size = UDim2.new(1, 0, 0, 15)
+CreditLabel.Position = UDim2.new(0, 0, 1, -18)
 CreditLabel.BackgroundTransparency = 1
 CreditLabel.Font = Enum.Font.GothamSemibold
-CreditLabel.Text = "🔮 Made by ttkzwzz 🔮"
+CreditLabel.Text = "Made by ttkzwzz"
 CreditLabel.TextColor3 = Color3.fromRGB(150, 0, 0)
-CreditLabel.TextSize = 8.5
+CreditLabel.TextSize = 8
 CreditLabel.Parent = MainFrame
 
 -- ==================== LÓGICA ====================
