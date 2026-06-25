@@ -1,20 +1,36 @@
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local player = Players.LocalPlayer
-local mouse = player:GetMouse()
 
--- Configuração da UI
-local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
-local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0, 200, 0, 100)
-MainFrame.Position = UDim2.new(0.5, -100, 0.5, -50)
-MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+local isDupeOn = false
+local incrementValue = 1
+
+-- ==================== MAIN SCREEN SETUP ====================
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "ttkzwzzHub"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.IgnoreGuiInset = true
+ScreenGui.Parent = player:FindFirstChild("PlayerGui") or game:GetService("CoreGui")
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Size = UDim2.new(0, 310, 0, 160)
+MainFrame.Position = UDim2.new(0.5, -155, 0.5, -80)
+MainFrame.BackgroundColor3 = Color3.fromRGB(10, 5, 5)
+MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
+MainFrame.Parent = ScreenGui
 
--- Sistema de Arraste (Mecanismo puro via Input)
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 12)
+MainCorner.Parent = MainFrame
+
+-- LÓGICA DE DRAGGING (Arrastar)
 local dragging, dragInput, dragStart, startPos
+
 MainFrame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
         dragStart = input.Position
         startPos = MainFrame.Position
@@ -22,20 +38,114 @@ MainFrame.InputBegan:Connect(function(input)
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-    if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+    if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+        dragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
         local delta = input.Position - dragStart
         MainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
     end
 end)
 
 UserInputService.InputEnded:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
+    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+        dragging = false
+    end
 end)
 
--- Botão de Teste (Para você ver se o script está rodando)
-local Toggle = Instance.new("TextButton", MainFrame)
-Toggle.Size = UDim2.new(1, 0, 1, 0)
-Toggle.Text = "CLIQUE AQUI PARA TESTAR"
-Toggle.MouseButton1Click:Connect(function()
-    print("Script ttkzwzz ativo e respondendo!")
+-- Borda Vermelha com efeito Pulsante
+local MainStroke = Instance.new("UIStroke")
+MainStroke.Thickness = 2
+MainStroke.Color = Color3.fromRGB(255, 0, 0)
+MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+MainStroke.Parent = MainFrame
+
+task.spawn(function()
+    while true do
+        TweenService:Create(MainStroke, TweenInfo.new(1.5), {Transparency = 0.5}):Play()
+        task.wait(1.5)
+        TweenService:Create(MainStroke, TweenInfo.new(1.5), {Transparency = 0}):Play()
+        task.wait(1.5)
+    end
+end)
+
+-- ==================== HEADER ====================
+local Title = Instance.new("TextLabel")
+Title.Size = UDim2.new(1, -60, 0, 40)
+Title.Position = UDim2.new(0, 16, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Font = Enum.Font.GothamBold
+Title.Text = "🤖 ttkzwzz <font color='rgb(255, 0, 0)'>Dupe</font>"
+Title.RichText = true
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 13
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = MainFrame
+
+-- ==================== MENU DE VALOR ====================
+local ValueInput = Instance.new("TextBox")
+ValueInput.Size = UDim2.new(0, 60, 0, 25)
+ValueInput.Position = UDim2.new(0, 16, 0, 50)
+ValueInput.BackgroundColor3 = Color3.fromRGB(30, 5, 5)
+ValueInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+ValueInput.PlaceholderText = "Value"
+ValueInput.Text = "1"
+ValueInput.Parent = MainFrame
+local InputCorner = Instance.new("UICorner")
+InputCorner.CornerRadius = UDim.new(0, 6)
+InputCorner.Parent = ValueInput
+
+ValueInput.FocusLost:Connect(function()
+    incrementValue = tonumber(ValueInput.Text) or 1
+end)
+
+-- ==================== TOGGLE ====================
+local ToggleSwitch = Instance.new("TextButton")
+ToggleSwitch.Size = UDim2.new(0, 44, 0, 22)
+ToggleSwitch.Position = UDim2.new(1, -56, 0, 52)
+ToggleSwitch.BackgroundColor3 = Color3.fromRGB(40, 5, 5)
+ToggleSwitch.Text = ""
+ToggleSwitch.Parent = MainFrame
+local SwitchCorner = Instance.new("UICorner")
+SwitchCorner.CornerRadius = UDim.new(1, 0)
+SwitchCorner.Parent = ToggleSwitch
+
+ToggleSwitch.MouseButton1Click:Connect(function()
+    isDupeOn = not isDupeOn
+    local targetColor = isDupeOn and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(40, 5, 5)
+    TweenService:Create(ToggleSwitch, TweenInfo.new(0.3), {BackgroundColor3 = targetColor}):Play()
+end)
+
+-- ==================== FOOTER ====================
+local CreditLabel = Instance.new("TextLabel")
+CreditLabel.Size = UDim2.new(1, 0, 0, 16)
+CreditLabel.Position = UDim2.new(0, 0, 1, -20)
+CreditLabel.BackgroundTransparency = 1
+CreditLabel.Font = Enum.Font.GothamSemibold
+CreditLabel.Text = "🔮 Made by ttkzwzz 🔮"
+CreditLabel.TextColor3 = Color3.fromRGB(150, 0, 0)
+CreditLabel.TextSize = 8.5
+CreditLabel.Parent = MainFrame
+
+-- ==================== LÓGICA ====================
+task.spawn(function()
+    while true do
+        task.wait(0.5)
+        if isDupeOn then
+            local coreGui = player:FindFirstChild("PlayerGui")
+            if coreGui then
+                for _, node in pairs(coreGui:GetDescendants()) do
+                    if node:IsA("TextLabel") and string.find(node.Text, "x") then
+                        local currentVal = tonumber(string.match(node.Text, "%d+"))
+                        if currentVal then
+                            node.Text = "x" .. (currentVal + incrementValue)
+                        end
+                    end
+                end
+            end
+        end
+    end
 end)
